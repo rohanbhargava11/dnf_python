@@ -28,7 +28,7 @@ sig=2*math.pi/10
 sig1=4*math.pi/10 #mexican hat
 C=0.5
 pat=np.zeros((nn,nn))
-h=0.0
+h=0.0 # Just now it is set to  0.0 later I will give its some input
 tau_inv=0.1
 
 #Training Weight Matrix
