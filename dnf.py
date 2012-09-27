@@ -27,8 +27,8 @@ dx=2*math.pi/nn
 sig=2*math.pi/10
 C=0.5
 pat=np.zeros((nn,nn))
-dt=0.12
-
+h=0.4
+tau_inv=0.1
 
 #Training Weight Matrix
 
@@ -55,43 +55,85 @@ w=4*(pat[0:100][50]-C)
 '''
 
 
+def plot(figno,time):
+    fig = plt.figure(figno)
+    ax = fig.gca(projection='3d')
+    X, Y = np.meshgrid(np.arange(nn),np.arange(time))
 
+    surf = ax.plot_surface(X, Y,u_history)
+    ax.w_zaxis.set_major_locator(LinearLocator(10))
+    ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    ax.set_zlabel("Excitation")
+    ax.set_xlabel("Node")
+    ax.set_ylabel("Time")
 
+def update(u,I):
+    
+    r=1/(1+np.exp(-u))
 
-
+    #print u.shape
+    
+    t=np.convolve(np.append(np.append(r[-1:nn/2:-1],r),r[:-nn/2]),w, 'valid')
+    #t=np.dot(r,w)  
+    sum1=t*dx
+   
+    u=u+tau_inv*((-u+sum1+I+h))
+        
+        
+    return u
 
 #Update With Localised Input
 
 I_ext=np.zeros((nn,))
 for k in range(int(nn/2-np.floor(nn/10)),int(nn/2+np.floor(nn/10))+1):
-    I_ext[k]=1
+    I_ext[k]=2
 
+
+
+#!print u.shape
+
+time=50
+u_history=np.zeros((time,nn))
 
 u=np.zeros((nn,))
-#!print u.shape
-r=1/(1+np.exp(-u))
-
-
-u_history=np.zeros((50,nn))
-for k in range(50):
-    print u.shape
-    t=np.convolve(np.append(np.append(r[-1:nn/2:-1],r),r[:-nn/2]),w, 'valid')
-    #t=np.dot(r,w)  
-    sum1=t*dx
-   
-    u=u+dt*(-u+sum1+I_ext)
+for k in range(time):
+    u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history[k]=r
+plot(1,time)
 
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-X, Y = np.meshgrid(np.arange(nn),np.arange(50))
+time=100
+u_history=np.zeros((time,nn))
 
-surf = ax.plot_surface(X, Y,u_history)
+I_ext=np.zeros((nn,))
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history[k]=r
+plot(2,time)
+
+
+
+
+#I=np.ones((nn,))
+#update(50,u,I)
+#plot(2,50)
+#r=1/1+exp(-I)
+#for k in range(50):
+#        #print u.shape
+#        r=1/(1+np.exp(-u))
+#        t=np.convolve(np.append(np.append(r[-1:nn/2:-1],r),r[:-nn/2]),w, 'valid')
+#        #t=np.dot(r,w)  
+#        sum1=t*dx
+#   
+#        u=u+dt*(-u+sum1+I)
+#        r=1/(1+np.exp(-u))
+        #u_history[k]=r
+#u=update(50,u,I_ext)
+#plt.show()
+
+#I_ext=np.zeros((nn,))
+
   
-#ax.w_zaxis.set_major_locator(LinearLocator(10))
-#ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-#ax.set_zlabel("Excitation")
-#ax.set_xlabel("Node")
-#ax.set_ylabel("Time")
+
 
