@@ -28,14 +28,14 @@ sig=2*math.pi/10
 sig1=4*math.pi/10 #mexican hat
 C=0.5
 pat=np.zeros((nn,nn))
-h=-1.0
+h=0.0
 tau_inv=0.1
 
 #Training Weight Matrix
 
-w0 = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2))) - C) 
-w1 = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig1,2))) - C) #mexican hat
-w=w0-w1 #mexican hat
+w = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2))) - C) 
+#w1 = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig1,2))) - C) #mexican hat
+#w=w0-w1 #mexican hat
 '''
 f=((nn-1)/2-np.arange(nn))
 f=f*dx
@@ -44,6 +44,7 @@ f=f/(2*(sig**2))
 f=np.exp(f)
 f=f-C
 f=4*f
+
 for loc in range(0,nn):
     i=np.arange(0,nn)
     #i=np.transpose(i)
@@ -66,9 +67,11 @@ def plot(figno,time):
     surf = ax.plot_surface(X, Y,u_history)
     ax.w_zaxis.set_major_locator(LinearLocator(10))
     ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    #fig.colorbar(surf, shrink=0.5, aspect=5)
     ax.set_zlabel("Excitation")
     ax.set_xlabel("Node")
     ax.set_ylabel("Time")
+    
 
 def update(u,I):
     
@@ -76,11 +79,11 @@ def update(u,I):
 
     #print u.shape
     
-    t=np.convolve(np.append(np.append(r[-1:nn/2:-1],r),r[:-nn/2]),w, 'valid')
+    t=np.convolve(np.append(np.append(r[nn/2+1:],r),r[:-nn/2]),w, 'valid')
     #t=np.dot(r,w)  
     sum1=t*dx
    
-    u=u+tau_inv*((-u+sum1+I))
+    u=u+tau_inv*((-u+sum1+I+h))
         
         
     return u
@@ -89,13 +92,13 @@ def update(u,I):
 
 I_ext=np.zeros((nn,))
 for k in range(int(nn/2-np.floor(nn/10)),int(nn/2+np.floor(nn/10))+1):
-    I_ext[k]=2
+    I_ext[k]=1
 
 
 
 #!print u.shape
 
-time=50
+time=100
 u_history=np.zeros((time,nn))
 
 u=np.zeros((nn,))
@@ -105,7 +108,8 @@ for k in range(time):
     u_history[k]=r
 plot(1,time)
 
-time=100
+
+time=50
 u_history=np.zeros((time,nn))
 
 I_ext=np.zeros((nn,))
@@ -117,6 +121,27 @@ plot(2,time)
 
 
 
+time=100
+u_history=np.zeros((time,nn))
+I_ext=np.zeros((nn,))
+for k in range(int((nn-11)-np.floor(nn/10)),int((nn-11)+np.floor(nn/10))+1):
+    I_ext[k]=1
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history[k]=r
+plot(3,time)
+
+
+time=50
+u_history=np.zeros((time,nn))
+
+I_ext=np.zeros((nn,))
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history[k]=r
+plot(4,time)
 
 #I=np.ones((nn,))
 #update(50,u,I)
@@ -137,6 +162,6 @@ plot(2,time)
 
 #I_ext=np.zeros((nn,))
 
-  
+
 
 
