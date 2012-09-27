@@ -25,14 +25,17 @@ from mpl_toolkits.mplot3d import Axes3D
 nn=101
 dx=2*math.pi/nn
 sig=2*math.pi/10
+sig1=4*math.pi/10 #mexican hat
 C=0.5
 pat=np.zeros((nn,nn))
-h=0.4
+h=-1.0
 tau_inv=0.1
 
 #Training Weight Matrix
 
-w = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2))) - C) 
+w0 = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2))) - C) 
+w1 = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig1,2))) - C) #mexican hat
+w=w0-w1 #mexican hat
 '''
 f=((nn-1)/2-np.arange(nn))
 f=f*dx
@@ -77,7 +80,7 @@ def update(u,I):
     #t=np.dot(r,w)  
     sum1=t*dx
    
-    u=u+tau_inv*((-u+sum1+I+h))
+    u=u+tau_inv*((-u+sum1+I))
         
         
     return u
