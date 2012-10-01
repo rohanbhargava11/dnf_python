@@ -92,10 +92,11 @@ I_ext=np.zeros((nn,nn))
 for k in range(int(nn/2-np.floor(nn/20)),int(nn/2+np.floor(nn/20))+1):
     I_ext[k]=1
 '''
-#I_ext[int(nn/2-np.floor(nn/10)):int(nn/2+np.floor(nn/10))+1,
- #     int(nn/2-np.floor(nn/10)):int(nn/2+np.floor(nn/10))+1] = 1
+I_ext=np.zeros((nn,nn))
+I_ext[int(nn/2-np.floor(nn/10)):int(nn/2+np.floor(nn/10))+1,
+     int(nn/2-np.floor(nn/10)):int(nn/2+np.floor(nn/10))+1] = 1
 
-I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
+#I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
 
 
 #!print u.shape
@@ -109,5 +110,13 @@ for k in range(20):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
+
+I_ext=np.zeros((nn,nn))
+
+for k in range(30):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history=r
+    
 plot(1,u_history)
 
