@@ -22,10 +22,10 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
     
-nn=101
+nn=1001
 dx=2*math.pi/nn
 sig=2*math.pi/10
-sig1=4*math.pi/10 #mexican hat
+sig1=2*math.pi/8 #mexican hat
 C=0.5
 pat=np.zeros((nn,nn))
 h=0.0 # Just now it is set to  0.0 later I will give its some input
@@ -33,9 +33,11 @@ tau_inv=0.1
 
 #Training Weight Matrix
 
-w = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2))) - C) 
-#w1 = 4 * (np.exp(-dx**2*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig1,2))) - C) #mexican hat
-#w=w0-w1 #mexican hat
+
+w0 = 4 * (np.exp(-dx*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2)))) 
+w1 = 3 * (np.exp(-dx*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig1,2)))) #mexican hat
+w=(w0-w1) #mexican hat
+
 '''
 f=((nn-1)/2-np.arange(nn))
 f=f*dx
@@ -66,7 +68,7 @@ def plot(figno,time):
 
     surf = ax.plot_surface(X, Y,u_history)
     ax.w_zaxis.set_major_locator(LinearLocator(10))
-    ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.3f'))
     #fig.colorbar(surf, shrink=0.5, aspect=5)
     ax.set_zlabel("Excitation")
     ax.set_xlabel("Node")
@@ -91,14 +93,19 @@ def update(u,I):
 #Update With Localised Input
 
 I_ext=np.zeros((nn,))
-for k in range(int(nn/2-np.floor(nn/10)),int(nn/2+np.floor(nn/10))+1):
-    I_ext[k]=1
 
+for k in range(140,500):
+    I_ext[k]=1
+#for k in range(600,800):
+ #   I_ext[k]=1
+
+#for k in range(int(nn/2-np.floor(nn/10)),int(nn/2+np.floor(nn/10))+1):
+ #  I_ext[k]=1
 
 
 #!print u.shape
 
-time=100
+time=500
 u_history=np.zeros((time,nn))
 
 u=np.zeros((nn,))
@@ -106,10 +113,10 @@ for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history[k]=r
-plot(1,time)
+#plot(1,time)
 
 
-time=50
+time=100
 u_history=np.zeros((time,nn))
 
 I_ext=np.zeros((nn,))
@@ -118,13 +125,13 @@ for k in range(time):
     r=1/(1+np.exp(-u))
     u_history[k]=r
 plot(2,time)
-
+'''
 
 
 time=100
 u_history=np.zeros((time,nn))
 I_ext=np.zeros((nn,))
-for k in range(int((nn-11)-np.floor(nn/10)),int((nn-11)+np.floor(nn/10))+1):
+for k in range(600,800):
     I_ext[k]=1
 for k in range(time):
     u=update(u,I_ext)
@@ -133,7 +140,7 @@ for k in range(time):
 plot(3,time)
 
 
-time=50
+time=150
 u_history=np.zeros((time,nn))
 
 I_ext=np.zeros((nn,))
@@ -143,6 +150,20 @@ for k in range(time):
     u_history[k]=r
 plot(4,time)
 
+
+for k in range(140,200):
+    I_ext[k]=1
+
+time=25
+u_history=np.zeros((time,nn))
+
+u=np.zeros((nn,))
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history[k]=r
+plot(5,time)
+'''
 #I=np.ones((nn,))
 #update(50,u,I)
 #plot(2,50)

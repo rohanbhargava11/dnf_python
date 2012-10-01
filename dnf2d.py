@@ -21,6 +21,7 @@ Created on Mon Sep 24 19:15:40 2012
 
 import numpy as np
 import math
+from matplotlib import cm
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
@@ -43,8 +44,11 @@ tau_inv=0.1
 
 X,Y=np.mgrid[-nn/2:nn/2,-nn/2:nn/2]
 
-w=4*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig**2))-C))
+w0=4*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig**2))))
 
+w1=3*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig1**2))))
+
+w=w0-w1
 
 
 def plot(figno,u_history):
@@ -59,7 +63,8 @@ def plot(figno,u_history):
     ax.set_zlabel("Excitation")
     ax.set_xlabel("Node X")
     ax.set_ylabel("Node Y")
-    fig.colorbar(surf, shrink=0.5, aspect=5)  
+    fig.colorbar(surf, shrink=0.5, aspect=5) 
+    
 
 def update(u,I):
     
@@ -93,8 +98,8 @@ for k in range(int(nn/2-np.floor(nn/20)),int(nn/2+np.floor(nn/20))+1):
     I_ext[k]=1
 '''
 I_ext=np.zeros((nn,nn))
-I_ext[int(nn/2-np.floor(nn/10)):int(nn/2+np.floor(nn/10))+1,
-     int(nn/2-np.floor(nn/10)):int(nn/2+np.floor(nn/10))+1] = 1
+I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
+     int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
 
 #I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
 
@@ -110,7 +115,9 @@ for k in range(20):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
-
+    
+plot(1,u_history)
+u_history=np.zeros((nn,nn))
 I_ext=np.zeros((nn,nn))
 
 for k in range(30):
@@ -118,5 +125,6 @@ for k in range(30):
     r=1/(1+np.exp(-u))
     u_history=r
     
-plot(1,u_history)
+plot(2,u_history)
 
+plt.show()
