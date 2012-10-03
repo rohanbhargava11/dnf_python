@@ -17,16 +17,16 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
-
+import scipy.stats as sp
 
 
 
     
 nn=1001
 dx=2*math.pi/nn
-sig=2*math.pi/10
-sig1=2*math.pi/8 #mexican hat
-C=0.5
+sig=2*math.pi/36
+sig1=2*math.pi/22 #mexican hat
+C=0.09
 pat=np.zeros((nn,nn))
 h=0.0 # Just now it is set to  0.0 later I will give its some input
 tau_inv=0.1
@@ -34,19 +34,33 @@ tau_inv=0.1
 #Training Weight Matrix
 
 
-w0 = 4 * (np.exp(-dx*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig,2)))) 
-w1 = 3 * (np.exp(-dx*((nn-1.)/2-np.arange(nn))**2/(2*pow(sig1,2)))) #mexican hat
-w=(w0-w1) #mexican hat
+#w0 =(np.exp(-(dx*((nn-1.)/2-np.arange(nn))**2)/(2*pow(sig1,2)))) 
+#w0 =(np.exp(-(dx*((nn-1.)/2-np.arange(nn))**2)/(2*pow(sig,2))))  #mexican hat
+#w=(w0-w1)
+
+def weights(sig):
+    f=np.zeros((nn,))    
+    f=((nn-1)/2-np.arange(nn))
+    #sig=sig**2
+    #f=f*dx
+    #f=-(f**2)
+    #f=f/(2*(sig**2))
+    #f=sp.norm.pdf(f,0,sig)  
+    f=f*dx
+    f=1./(np.sqrt(2*math.pi)*sig)*np.exp(-(f**2/(2*sig**2)))    
+    #print f.shape
+#f=np.exp(f)
+    #f=np.dot(f,f.transpose())
+    #f=np.dot(f,f)
+    return f
+    #f=f-C
+    #f=aw*f
+#w0=4*weights(sig)
+#w0=np.dot(w0,w0.transpose())
+#w1=3*weights(sig1)
+#w=(w0-w1)
 
 '''
-f=((nn-1)/2-np.arange(nn))
-f=f*dx
-f=-(f**2)
-f=f/(2*(sig**2))
-f=np.exp(f)
-f=f-C
-f=4*f
-
 for loc in range(0,nn):
     i=np.arange(0,nn)
     #i=np.transpose(i)
@@ -73,6 +87,7 @@ def plot(figno,time):
     ax.set_zlabel("Excitation")
     ax.set_xlabel("Node")
     ax.set_ylabel("Time")
+  
     
 
 def update(u,I):
@@ -90,12 +105,23 @@ def update(u,I):
         
     return u
 
+
+def gauss_pbc(locx,sig):
+        w=np.zeros((nn,))
+        for i in range(nn):
+                d=min([abs(i*dx-locx) , 2*math.pi-abs(i*dx-locx)])
+                #d=d*dx
+                w[i]=1./(np.sqrt(2*math.pi)*sig)*np.exp(-(d**2/(2*sig**2)))
+                #w[i]=np.exp(-(d**2/(2*sig**2)))
+        return w
+
 #Update With Localised Input
 
 I_ext=np.zeros((nn,))
 
-for k in range(140,500):
+for k in range(450,550):
     I_ext[k]=1
+
 #for k in range(600,800):
  #   I_ext[k]=1
 
@@ -104,8 +130,30 @@ for k in range(140,500):
 
 
 #!print u.shape
+#I_ext=gauss_pbc(math.pi,sig/200)
+#I_ext=np.reshape(I_ext,(nn,))
 
-time=500
+def hebbMulti():
+        
+        w=np.zeros((nn,nn))   
+        for i in range(nn):
+            r=gauss_pbc(i*dx,sig/3) - gauss_pbc(i*dx,sig)
+            #plt.plot(r)
+            w=w+np.dot(r,r.transpose())
+            print w.shape
+        return w/nn
+#w=hebbMulti() 
+#w=1000*(hebbMulti()-C)
+#v0=gauss_pbc(50,sig/3)
+
+#v1=gauss_pbc(50,sig)
+#v=w[50]
+#v2=1000*(((v0-v1)/nn)-C)
+t0=weights(sig)
+t1=weights(sig*1.44)
+w=50*((t0-t1)-C)
+
+time=50
 u_history=np.zeros((time,nn))
 
 u=np.zeros((nn,))
@@ -113,10 +161,10 @@ for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history[k]=r
-#plot(1,time)
+plot(1,time)
 
 
-time=100
+time=200
 u_history=np.zeros((time,nn))
 
 I_ext=np.zeros((nn,))
@@ -125,13 +173,15 @@ for k in range(time):
     r=1/(1+np.exp(-u))
     u_history[k]=r
 plot(2,time)
-'''
+
+
+
 
 
 time=100
 u_history=np.zeros((time,nn))
 I_ext=np.zeros((nn,))
-for k in range(600,800):
+for k in range(250,350):
     I_ext[k]=1
 for k in range(time):
     u=update(u,I_ext)
@@ -150,7 +200,9 @@ for k in range(time):
     u_history[k]=r
 plot(4,time)
 
+#plt.show()
 
+'''
 for k in range(140,200):
     I_ext[k]=1
 
