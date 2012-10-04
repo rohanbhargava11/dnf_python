@@ -123,7 +123,7 @@ for k in range(int(nn/2-np.floor(nn/20)),int(nn/2+np.floor(nn/20))+1):
 I_ext=np.zeros((nn,nn))
 #I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
  #    int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
-I_ext[47:52,47:52]=1
+I_ext[50:52,50:52]=1
 #I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
 
 
