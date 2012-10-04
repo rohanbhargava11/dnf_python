@@ -34,21 +34,44 @@ import scipy.signal as sp
 nn=101
 dx=2*math.pi/nn
 dy=2*math.pi/nn
-sig=2*math.pi/10
-sig1=4*math.pi/10 #mexican hat
-C=0.5
+sig=2*math.pi/36
+sig1=2*math.pi/32 #mexican hat
+C=0.09
 pat=np.zeros((nn,nn))
 h=0.0 # Just now it is set to  0.0 later I will give its some input
 tau_inv=0.1
 
 
 X,Y=np.mgrid[-nn/2:nn/2,-nn/2:nn/2]
+def weights(sig):
+    f=np.zeros((nn,nn))    
+    f=-((dx*X)**2+(dy*X)**2)
+    f=f/2*sig**2
+    f=np.exp(f)
+    f=f*(1./(np.sqrt(2*math.pi)*sig))
+    return f
+    
+    #sig=sig**2
+    #f=f*dx
+    #f=-(f**2)
+    #f=f/(2*(sig**2))
+    #f=sp.norm.pdf(f,0,sig)  
+    #f=f*dx
+    #f=1./(np.sqrt(2*math.pi)*sig)*np.exp(-(f**2/(2*sig**2)))    
+    #print f.shape
+#f=np.exp(f)
+    #f=np.dot(f,f.transpose())
+    #f=np.dot(f,f)
+    #return f
 
-w0=4*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig**2))))
+w0=1./(np.sqrt(2*math.pi)*sig)*(np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig**2)))
 
-w1=3*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig1**2))))
+w1=1./(np.sqrt(2*math.pi)*sig1)*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig1**2))))
 
-w=w0-w1
+#w0=weights(sig)
+
+#w1=weights(sig*3)
+w=50*((w0-w1))
 
 
 def plot(figno,u_history):
@@ -98,29 +121,30 @@ for k in range(int(nn/2-np.floor(nn/20)),int(nn/2+np.floor(nn/20))+1):
     I_ext[k]=1
 '''
 I_ext=np.zeros((nn,nn))
-I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
-     int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
-
+#I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
+ #    int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
+I_ext[47:52,47:52]=1
 #I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
 
 
 #!print u.shape
 
-time=100
+time=20
 u_history=np.zeros((nn,nn))
 
 u=np.zeros((nn,nn))
-for k in range(20):
+for k in range(time):
     
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
     
 plot(1,u_history)
+
 u_history=np.zeros((nn,nn))
 I_ext=np.zeros((nn,nn))
-
-for k in range(30):
+time=20
+for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r

@@ -119,7 +119,7 @@ def gauss_pbc(locx,sig):
 
 I_ext=np.zeros((nn,))
 
-for k in range(450,550):
+for k in range(420,450):
     I_ext[k]=1
 
 #for k in range(600,800):
