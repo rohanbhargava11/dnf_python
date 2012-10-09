@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
 import scipy.signal as sp
-
+import cv2
 
 
 
@@ -35,7 +35,7 @@ nn=101
 dx=2*math.pi/nn
 dy=2*math.pi/nn
 sig=2*math.pi/36
-sig1=2*math.pi/32 #mexican hat
+sig1=sig*1.44 #mexican hat
 C=0.09
 pat=np.zeros((nn,nn))
 h=0.0 # Just now it is set to  0.0 later I will give its some input
@@ -45,8 +45,8 @@ tau_inv=0.1
 X,Y=np.mgrid[-nn/2:nn/2,-nn/2:nn/2]
 def weights(sig):
     f=np.zeros((nn,nn))    
-    f=-((dx*X)**2+(dy*X)**2)
-    f=f/2*sig**2
+    f=-(((dx*X)**2/2*sig**2)+((dy*Y)**2/2*sig**2))
+    #f=f/2*sig**2
     f=np.exp(f)
     f=f*(1./(np.sqrt(2*math.pi)*sig))
     return f
@@ -65,13 +65,13 @@ def weights(sig):
     #return f
 
 w0=1./(np.sqrt(2*math.pi)*sig)*(np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig**2)))
-
-w1=1./(np.sqrt(2*math.pi)*sig1)*((np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig1**2))))
+#w=4*(w-C)
+w1=1./(np.sqrt(2*math.pi)*sig1)*(np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig1**2)))
 
 #w0=weights(sig)
 
-#w1=weights(sig*3)
-w=50*((w0-w1))
+#w1=weights(sig1)
+w=50*((w0-w1)-C)
 
 
 def plot(figno,u_history):
@@ -79,7 +79,8 @@ def plot(figno,u_history):
     ax = fig.gca(projection='3d')
     X, Y = np.meshgrid(np.arange(nn),np.arange(nn))
 
-    surf = ax.plot_surface(X, Y,u_history,cmap=cm.jet,linewidth=0, antialiased=True)
+    surf = ax.plot_surface(X, Y,u_history,cmap=cm.jet,
+            linewidth=0, antialiased=True)
     ax.w_zaxis.set_major_locator(LinearLocator(10))
     ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.3f'))
     
@@ -121,9 +122,12 @@ for k in range(int(nn/2-np.floor(nn/20)),int(nn/2+np.floor(nn/20))+1):
     I_ext[k]=1
 '''
 I_ext=np.zeros((nn,nn))
-#I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
- #    int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
-I_ext[50:52,50:52]=1
+#input_image=cv2.imread('/home/rohan/Documents/dnf_python/test.jpg',0)
+#input_image=cv2.resize(input_image,(101,101))
+#I_ext=input_image
+I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
+     int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
+#I_ext[50:60,50:60]=1
 #I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
 
 
