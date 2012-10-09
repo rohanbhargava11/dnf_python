@@ -1,24 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 27 15:17:28 2012
 
-@author: rohan
-"""
 
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 27 10:21:25 2012
-
-@author: rohan
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 24 19:15:40 2012
-
-@author: Rohan
-"""
-
+from __future__ import division
 import numpy as np
 import math
 from matplotlib import cm
@@ -34,8 +16,8 @@ import cv2
 nn=101
 dx=2*math.pi/nn
 dy=2*math.pi/nn
-sig=2*math.pi/36
-sig1=sig*1.44 #mexican hat
+sig=2*math.pi/15
+sig1=sig*4#mexican hat
 C=0.09
 pat=np.zeros((nn,nn))
 h=0.0 # Just now it is set to  0.0 later I will give its some input
@@ -71,7 +53,7 @@ w1=1./(np.sqrt(2*math.pi)*sig1)*(np.exp((-(((dx*X)**2)+((dy*Y)**2)))/(2*sig1**2)
 #w0=weights(sig)
 
 #w1=weights(sig1)
-w=50*((w0-w1)-C)
+w=100*((w0-w1)-C)
 
 
 def plot(figno,u_history):
@@ -79,15 +61,15 @@ def plot(figno,u_history):
     ax = fig.gca(projection='3d')
     X, Y = np.meshgrid(np.arange(nn),np.arange(nn))
 
-    surf = ax.plot_surface(X, Y,u_history,cmap=cm.jet,
-            linewidth=0, antialiased=True)
+    surf = ax.plot_surface(X, Y,u_history)#,cmap=cm.jet,
+            #linewidth=0, antialiased=True)
     ax.w_zaxis.set_major_locator(LinearLocator(10))
     ax.w_zaxis.set_major_formatter(FormatStrFormatter('%.3f'))
     
     ax.set_zlabel("Excitation")
     ax.set_xlabel("Node X")
     ax.set_ylabel("Node Y")
-    fig.colorbar(surf, shrink=0.5, aspect=5) 
+    #fig.colorbar(surf, shrink=0.5, aspect=5) 
     
 
 def update(u,I):
@@ -98,9 +80,9 @@ def update(u,I):
     
     t=sp.convolve2d(r,w,'same','wrap')
     #t=np.dot(r,w)  
-    sum1=t*dx
+    sum1=t*dx*dx
    
-    u=u+tau_inv*((-u+sum1+I))
+    u=u+tau_inv*((-u+sum1+50*I)+h)
         
         
     return u
@@ -122,11 +104,19 @@ for k in range(int(nn/2-np.floor(nn/20)),int(nn/2+np.floor(nn/20))+1):
     I_ext[k]=1
 '''
 I_ext=np.zeros((nn,nn))
-#input_image=cv2.imread('/home/rohan/Documents/dnf_python/test.jpg',0)
-#input_image=cv2.resize(input_image,(101,101))
-#I_ext=input_image
-I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
-     int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
+input_image=cv2.imread('/home/rohan/Documents/dnf_python/test1.jpg',0)
+input_image=cv2.resize(input_image,(101,101))
+for i in range (101):
+    for j in range (101):
+        if input_image[i][j]>140:
+            input_image[i][j]=0
+        else:
+            input_image[i][j]=1
+I_ext=input_image#/np.max(input_image)
+#cv2.imshow('test',input_image)
+#I_ext[int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1,
+ 
+#     int(nn/2-np.floor(nn/20)):int(nn/2+np.floor(nn/20))+1] = 1
 #I_ext[50:60,50:60]=1
 #I_ext=gauss_pbc(3*math.pi/2,3*math.pi/2,sig)
 
@@ -145,6 +135,8 @@ for k in range(time):
     
 plot(1,u_history)
 
+plot(3,I_ext)
+plot(6,w)
 u_history=np.zeros((nn,nn))
 I_ext=np.zeros((nn,nn))
 time=20
@@ -154,5 +146,20 @@ for k in range(time):
     u_history=r
     
 plot(2,u_history)
+I_ext[10:20,10:20] = 1
+time=30
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history=r
+plot(4,u_history)
+I_ext=np.zeros((nn,nn))
+time=20
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history=r
+plot(5,u_history)
 
+plot(6,w)
 plt.show()

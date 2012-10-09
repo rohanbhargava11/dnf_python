@@ -22,6 +22,7 @@ import scipy.stats as sp
 
 
     
+    
 nn=1001
 dx=2*math.pi/nn
 sig=2*math.pi/36
