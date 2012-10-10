@@ -16,7 +16,7 @@ import cv2
 nn=101
 dx=2*math.pi/nn
 dy=2*math.pi/nn
-sig=2*math.pi/15
+sig=2*math.pi/18
 sig1=sig*4#mexican hat
 C=0.09
 pat=np.zeros((nn,nn))
@@ -123,6 +123,8 @@ I_ext=input_image#/np.max(input_image)
 
 #!print u.shape
 
+I_ext[10:30,10:30] = 1
+
 time=20
 u_history=np.zeros((nn,nn))
 
@@ -134,20 +136,21 @@ for k in range(time):
     u_history=r
     
 plot(1,u_history)
+plot(7,I_ext)
 
-plot(3,I_ext)
-plot(6,w)
 u_history=np.zeros((nn,nn))
 I_ext=np.zeros((nn,nn))
-time=20
+time=60
 for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
     
 plot(2,u_history)
+
+'''
 I_ext[10:20,10:20] = 1
-time=30
+time=20
 for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
@@ -160,6 +163,8 @@ for k in range(time):
     r=1/(1+np.exp(-u))
     u_history=r
 plot(5,u_history)
-
+'''
 plot(6,w)
+
+
 plt.show()
