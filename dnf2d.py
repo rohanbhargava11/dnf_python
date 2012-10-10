@@ -16,14 +16,14 @@ import cv2
 nn=101
 dx=2*math.pi/nn
 dy=2*math.pi/nn
-sig=2*math.pi/18
+sig=2*math.pi/15
 sig1=sig*4#mexican hat
 C=0.09
 pat=np.zeros((nn,nn))
-h=0.0 # Just now it is set to  0.0 later I will give its some input
+h=10.0 # Just now it is set to  0.0 later I will give its some input
 tau_inv=0.1
 
-
+print 'hello world'
 X,Y=np.mgrid[-nn/2:nn/2,-nn/2:nn/2]
 def weights(sig):
     f=np.zeros((nn,nn))    
@@ -123,7 +123,7 @@ I_ext=input_image#/np.max(input_image)
 
 #!print u.shape
 
-I_ext[10:30,10:30] = 1
+#I_ext[10:20,10:20] = 1
 
 time=20
 u_history=np.zeros((nn,nn))
@@ -140,29 +140,47 @@ plot(7,I_ext)
 
 u_history=np.zeros((nn,nn))
 I_ext=np.zeros((nn,nn))
-time=60
+#I_ext[10:20,10:20] = 1
+time=30
+#h=-15.0
 for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
     
 plot(2,u_history)
+u_history=np.zeros((nn,nn))
+I_ext=np.zeros((nn,nn))
+I_ext[10:20,10:20] = 1
+time=30
+h=-15.0
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history=r
+    
+plot(3,u_history)
 
 '''
 I_ext[10:20,10:20] = 1
+time=40
+u_history=np.zeros((nn,nn))
+#h=5
+for k in range(time):
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history=r
+plot(3,u_history)
+'''
+'''
+I_ext=np.zeros((nn,nn))
 time=20
+
 for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
 plot(4,u_history)
-I_ext=np.zeros((nn,nn))
-time=20
-for k in range(time):
-    u=update(u,I_ext)
-    r=1/(1+np.exp(-u))
-    u_history=r
-plot(5,u_history)
 '''
 plot(6,w)
 
