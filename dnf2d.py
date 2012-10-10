@@ -11,7 +11,7 @@ import scipy.signal as sp
 import cv2
 
 
-print 'Hello'
+
     
 nn=101
 dx=2*math.pi/nn
@@ -147,28 +147,6 @@ for k in range(time):
     u_history=r
     
 plot(2,u_history)
-time =20
-I_ext=input_image
-u_history=np.zeros((nn,nn))
-for k in range(time):
-    
-    u=update(u,I_ext)
-    r=1/(1+np.exp(-u))
-    u_history=r
-    
-plot(3,u_history)
-
-
-I_ext=np.zeros((nn,nn))
-u_history=np.zeros((nn,nn))
-for k in range(time):
-    
-    u=update(u,I_ext)
-    r=1/(1+np.exp(-u))
-    u_history=r
-    
-plot(4,u_history)
-
 
 '''
 I_ext[10:20,10:20] = 1

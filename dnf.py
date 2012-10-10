@@ -91,8 +91,6 @@ I_ext=np.zeros((nn,))
 for k in range(450,550):
     I_ext[k]=1
 
-for k in range(250,350):
-    I_ext[k]=1
 t0=weights(sig)
 t1=weights(sig*1.44)
 w=50*((t0-t1)-C)
@@ -108,7 +106,7 @@ for k in range(time):
 plot(1,time)
 
 
-time=50
+time=200
 u_history=np.zeros((time,nn))
 
 I_ext=np.zeros((nn,))
@@ -121,7 +119,7 @@ plot(2,time)
 
 
 
-'''
+
 time=100
 u_history=np.zeros((time,nn))
 I_ext=np.zeros((nn,))
@@ -143,7 +141,7 @@ for k in range(time):
     r=1/(1+np.exp(-u))
     u_history[k]=r
 plot(4,time)
-'''
+
 plt.show()
 
 
