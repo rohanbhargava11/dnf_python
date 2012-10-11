@@ -18,7 +18,7 @@ dx=2*math.pi/nn
 dy=2*math.pi/nn
 sig=2*math.pi/15
 sig1=sig*4#mexican hat
-C=0.3
+C=0.09
 pat=np.zeros((nn,nn))
 h=0.0 # Just now it is set to  0.0 later I will give its some input
 tau_inv=0.1
@@ -123,7 +123,7 @@ I_ext=input_image#/np.max(input_image)
 
 #!print u.shape
 
-#I_ext[10:30,10:30] = 1
+I_ext[10:30,10:30] = 1
 
 time=20
 u_history=np.zeros((nn,nn))
@@ -135,29 +135,46 @@ for k in range(time):
     r=1/(1+np.exp(-u))
     u_history=r
     
-plot(1,u_history)
-plot(7,I_ext)
+#plot(1,u_history)
+#plot(7,I_ext)
 
 u_history=np.zeros((nn,nn))
 I_ext=np.zeros((nn,nn))
-time=30
+#I_ext[10:30,10:30] = 1
+time=20
 for k in range(time):
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
     
-plot(2,u_history)
-'''
-time =20
-I_ext=input_image
+#plot(2,u_history)
+
 u_history=np.zeros((nn,nn))
+I_ext=np.zeros((nn,nn))
+I_ext[10:30,10:30] = 1
+time=20
+h=5.0 # changes the h to control the decay in the bubble without the input
+
+# without this put the time as 8 and you can see the decay
+
+
 for k in range(time):
-    
     u=update(u,I_ext)
     r=1/(1+np.exp(-u))
     u_history=r
     
 plot(3,u_history)
+'''
+time =20
+I_ext=np.zeros((nn,nn))
+u_history=np.zeros((nn,nn))
+for k in range(time):
+    
+    u=update(u,I_ext)
+    r=1/(1+np.exp(-u))
+    u_history=r
+    
+plot(4,u_history)
 
 
 I_ext=np.zeros((nn,nn))
