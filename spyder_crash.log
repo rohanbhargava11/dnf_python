@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/dist-packages/spyderlib/spyder.py", line 1920, in main
+    mainwindow = run_spyder(app, options)
+  File "/usr/lib/python2.7/dist-packages/spyderlib/spyder.py", line 1830, in run_spyder
+    main = MainWindow(options)
+  File "/usr/lib/python2.7/dist-packages/spyderlib/spyder.py", line 339, in __init__
+    pixmap = QPixmap(get_image_path('splash.png'), 'png')
+KeyboardInterrupt
